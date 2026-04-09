@@ -1,0 +1,669 @@
+/* =========================================
+   1. GLOBAL VARIABLES & FONTS
+   ========================================= */
+:root {
+    --white: #ffffff;
+    --off-white: #fcfcf9;
+    --light-purple: #f3e5f5;
+    --main-purple: #9c27b0;
+    --dark-purple: #4a148c;
+    --light-blue: #e3f2fd;
+    --main-blue: #1976d2;
+    --text-dark: #222222;
+    --text-light: #777777;
+    --hand-font: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif; 
+}
+
+/* =========================================
+   2. BASE STYLES & RESET
+   ========================================= */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+
+body { 
+    background-color: var(--off-white); 
+    color: var(--text-dark); 
+    display: flex; 
+    height: 100vh; 
+    overflow: hidden; 
+}
+
+.hidden { 
+    display: none !important; 
+}
+
+/* =========================================
+   3. BUTTONS & INPUTS
+   ========================================= */
+.primary-btn { 
+    background-color: var(--main-purple); 
+    color: var(--white); 
+    border: none; 
+    padding: 12px 24px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    width: 100%; 
+    font-size: 16px; 
+    margin-top: 20px; 
+    font-family: var(--hand-font); 
+    transition: background-color 0.3s ease;
+}
+
+.primary-btn:hover {
+    background-color: var(--dark-purple);
+}
+
+.secondary-btn { 
+    background-color: transparent; 
+    color: var(--text-dark); 
+    border: 2px solid var(--text-dark); 
+    padding: 8px 16px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-family: var(--hand-font); 
+}
+
+.input-group { 
+    margin: 15px 0; 
+}
+
+.input-group input { 
+    width: 100%; 
+    padding: 12px; 
+    border: 2px solid #ddd; 
+    border-radius: 8px; 
+    background-color: var(--off-white); 
+}
+
+/* Toggle Switch */
+.toggle-container { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px; 
+    margin-top: 15px; 
+    color: var(--text-light); 
+}
+
+.switch { 
+    position: relative; 
+    display: inline-block; 
+    width: 50px; 
+    height: 24px; 
+}
+
+.switch input { 
+    opacity: 0; 
+    width: 0; 
+    height: 0; 
+}
+
+.slider { 
+    position: absolute; 
+    cursor: pointer; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    background-color: #ccc; 
+    transition: .4s; 
+    border-radius: 24px; 
+}
+
+.slider:before { 
+    position: absolute; 
+    content: ""; 
+    height: 16px; 
+    width: 16px; 
+    left: 4px; 
+    bottom: 4px; 
+    background-color: white; 
+    transition: .4s; 
+    border-radius: 50%; 
+}
+
+input:checked + .slider { 
+    background-color: var(--main-blue); 
+}
+
+input:checked + .slider:before { 
+    transform: translateX(26px); 
+}
+
+/* =========================================
+   4. LOGIN OVERLAY
+   ========================================= */
+.overlay { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background-color: var(--light-purple); 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 1000; 
+}
+
+.login-box { 
+    background: var(--white); 
+    padding: 40px; 
+    border-radius: 16px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+    text-align: center; 
+    width: 100%; 
+    max-width: 400px; 
+}
+
+.login-box h1 { 
+    color: var(--main-purple); 
+    margin-bottom: 10px; 
+    font-family: var(--hand-font); 
+}
+
+/* =========================================
+   5. MAIN APP LAYOUT
+   ========================================= */
+#app-container { 
+    display: flex; 
+    width: 100%; 
+    height: 100%; 
+}
+
+.sidebar { 
+    width: 250px; 
+    background-color: var(--white); 
+    padding: 30px 20px; 
+    border-right: 2px dashed #eee; 
+}
+
+.brand { 
+    color: var(--main-purple); 
+    margin-bottom: 5px; 
+    font-family: var(--hand-font); 
+    font-size: 28px; 
+}
+
+.user-status { 
+    font-size: 12px; 
+    color: var(--main-blue); 
+    margin-bottom: 30px; 
+    padding-bottom: 10px; 
+    border-bottom: 2px dashed #eee; 
+}
+
+.sidebar ul { 
+    list-style: none; 
+}
+
+.sidebar li { 
+    padding: 12px 15px; 
+    margin-bottom: 10px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    color: var(--text-dark); 
+    font-family: var(--hand-font); 
+    font-size: 18px; 
+    transition: background 0.3s ease;
+}
+
+.sidebar li:hover { 
+    background-color: var(--light-purple); 
+    color: var(--dark-purple); 
+}
+
+.content { 
+    flex: 1; 
+    padding: 40px; 
+    overflow-y: auto; 
+    background-image: radial-gradient(#e0e0e0 1px, transparent 1px); 
+    background-size: 20px 20px; 
+    position: relative; 
+}
+
+.tab-content { 
+    display: none; 
+    animation: fadein 0.5s; 
+}
+
+.tab-content.active { 
+    display: block; 
+}
+
+@keyframes fadein { 
+    from { opacity: 0; transform: translateY(10px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+/* =========================================
+   6. DASHBOARD & DOODLE NOTES
+   ========================================= */
+/* =========================================
+   6. DASHBOARD & DOODLE NOTES
+   ========================================= */
+.dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.dashboard-header h2 { font-family: var(--hand-font); color: var(--dark-purple); }
+.small-toggle { display: flex; align-items: center; gap: 10px; padding: 10px 15px; border-radius: 30px; background: var(--white); border: 2px solid #333; }
+.sketchbook-board { display: flex; flex-wrap: wrap; gap: 25px; align-items: flex-start; }
+
+.doodle-note { 
+    background: var(--white); padding: 25px; width: calc(33.333% - 20px); min-width: 250px; 
+    font-family: var(--hand-font); color: var(--text-dark); 
+    border: 2px solid #222; border-radius: 2% 95% 3% 90% / 95% 4% 92% 5%; 
+    box-shadow: 3px 4px 0px rgba(0,0,0,0.1); 
+    /* added transform timing for the flip animation */
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, box-shadow 0.3s ease; 
+}
+
+/* NEW: styles for notes that can be clicked */
+.interactive-note {
+    cursor: pointer;
+}
+.interactive-note:hover { 
+    transform: scale(1.05) rotate(0deg); 
+    z-index: 10; 
+    box-shadow: 5px 8px 0px rgba(0,0,0,0.15);
+}
+
+/* NEW: the 3d flip animation state */
+.doodle-note.flipping {
+    transform: rotateY(90deg) scale(1.05) !important;
+    opacity: 0.2;
+}
+
+.tilt-left { transform: rotate(-3deg); }
+.tilt-right { transform: rotate(2deg); }
+.highlight-purple { background-color: #faf5ff; border-color: var(--main-purple); }
+.shape-cloud { border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; border-style: dashed; text-align: center; font-size: 1.3rem; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+/* =========================================
+   7. BREATHING WIDGET
+   ========================================= */
+.breathing-widget { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    height: 250px; 
+}
+
+.breathing-circle { 
+    width: 100px; 
+    height: 100px; 
+    background-color: var(--light-purple); 
+    border: 3px dashed var(--main-purple); 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    animation: breathe 10s infinite ease-in-out; 
+    margin-top: 20px; 
+}
+
+@keyframes breathe { 
+    0% { transform: scale(1); background-color: var(--light-purple); } 
+    40% { transform: scale(1.6); background-color: #d1c4e9; } 
+    50% { transform: scale(1.6); } 
+    90% { transform: scale(1); background-color: var(--light-purple); } 
+    100% { transform: scale(1); } 
+}
+
+/* =========================================
+   8. PRIVATE DOODLE JOURNAL
+   ========================================= */
+/* =========================================
+   8. PRIVATE DOODLE JOURNAL (NOTEBOOK STYLE)
+   ========================================= */
+.journal-container { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 30px; 
+    margin-top: 20px; 
+}
+
+/* The Lined Paper Effect */
+#journal-text { 
+    width: 100%; 
+    height: 250px; 
+    /* Padding left creates space for the red margin line */
+    padding: 35px 20px 20px 60px; 
+    font-family: var(--hand-font); 
+    font-size: 18px; 
+    line-height: 30px; /* This must match the repeating gradient size below */
+    border: 2px solid #222; 
+    /* Wonky hand-drawn border */
+    border-radius: 2% 98% 3% 95% / 95% 3% 92% 5%; 
+    resize: vertical; 
+    background-color: var(--white); 
+    color: var(--dark-purple);
+    box-shadow: 4px 5px 0px rgba(0,0,0,0.1);
+    
+    /* Creates the ruled lines and the vertical red margin line */
+    background-image: 
+        linear-gradient(90deg, transparent 50px, #ffb3b3 50px, #ffb3b3 52px, transparent 52px),
+        repeating-linear-gradient(transparent, transparent 29px, #e0e0e0 29px, #e0e0e0 30px);
+}
+
+#journal-text:focus {
+    outline: none;
+    border-color: var(--main-purple);
+}
+
+.canvas-area { 
+    background: var(--white); 
+    padding: 25px; 
+    border: 2px solid #222; 
+    border-radius: 3% 95% 2% 98% / 95% 4% 95% 3%; 
+    box-shadow: 4px 5px 0px rgba(0,0,0,0.1);
+}
+
+.canvas-area p {
+    font-family: var(--hand-font);
+    color: var(--dark-purple);
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+#doodle-pad { 
+    border: 2px dashed #ccc; 
+    background: var(--off-white); 
+    cursor: crosshair; 
+    margin-bottom: 20px; 
+    width: 100%; 
+    border-radius: 8px;
+}
+
+.canvas-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap; /* NEW: Allows the 3 buttons to wrap on smaller screens */
+}
+
+.save-btn { 
+    width: auto; 
+    margin-top: 0; 
+}
+
+.status-msg { 
+    color: var(--main-blue); 
+    font-family: var(--hand-font); 
+    font-size: 14px; 
+    margin-top: 10px;
+}
+/* =========================================
+   9. MOOD TRACKER & QUIZ
+   ========================================= */
+.quiz-section { 
+    background: var(--white); 
+    padding: 20px; 
+    border: 2px solid #333; 
+    border-radius: 8px; 
+    margin-top: 20px; 
+    font-family: var(--hand-font); 
+}
+
+.quiz-section select { 
+    margin: 10px 0 20px 0; 
+    padding: 8px; 
+    font-family: var(--hand-font); 
+    border-radius: 4px; 
+}
+
+.submit-quiz { 
+    width: auto; 
+    margin-top: 10px; 
+}
+
+.quiz-result-box { 
+    margin-top: 15px; 
+    padding: 15px; 
+    background: var(--light-blue); 
+    border-radius: 8px; 
+}
+
+/* =========================================
+   10. CHAT & SUPPORT CIRCLES
+   ========================================= */
+.room-selector { 
+    display: flex; 
+    gap: 10px; 
+    margin-bottom: 15px; 
+}
+
+.room-btn { 
+    padding: 10px 15px; 
+    background: var(--white); 
+    border: 2px solid #333; 
+    border-radius: 20px; 
+    cursor: pointer; 
+    font-family: var(--hand-font); 
+}
+
+.room-btn.active { 
+    background: var(--light-purple); 
+    border-color: var(--main-purple); 
+    font-weight: bold; 
+}
+
+.chat-container { 
+    background: var(--white); 
+    border: 2px solid #333; 
+    height: 350px; 
+    display: flex; 
+    flex-direction: column; 
+    border-radius: 1% 98% 2% 95% / 95% 2% 98% 3%;
+    box-shadow: 4px 5px 0px rgba(0,0,0,0.1);
+}
+
+.chat-messages { 
+    flex: 1; 
+    padding: 20px; 
+    overflow-y: auto; 
+}
+
+.message { 
+    margin-bottom: 15px; 
+    padding: 10px 15px; 
+    border-radius: 15px; 
+    max-width: 70%; 
+    font-family: var(--hand-font); 
+}
+
+.system { 
+    background-color: var(--light-blue); 
+    margin: 0 auto; 
+    text-align: center; 
+    font-size: 12px; 
+}
+
+.user { 
+    background-color: var(--main-purple); 
+    color: var(--white); 
+    margin-left: auto; 
+    border-bottom-right-radius: 2px; 
+}
+
+.chat-input-area { 
+    display: flex; 
+    padding: 15px; 
+    border-top: 2px solid #333; 
+}
+
+.chat-input-area input { 
+    flex: 1; 
+    padding: 12px; 
+    border: 2px solid #ddd; 
+    margin-right: 10px; 
+    font-family: var(--hand-font); 
+    border-radius: 8px;
+}
+
+/* =========================================
+   11. HUG FEATURE & ANIMATIONS
+   ========================================= */
+.hug-btn { 
+    position: absolute; 
+    top: 40px; 
+    right: 40px; 
+    background: var(--white); 
+    border: 2px dashed var(--main-purple); 
+    padding: 10px 20px; 
+    border-radius: 30px; 
+    cursor: pointer; 
+    font-family: var(--hand-font); 
+    color: var(--main-purple); 
+    z-index: 100; 
+    transition: transform 0.2s; 
+}
+
+.hug-btn:hover { 
+    transform: scale(1.1); 
+    background: var(--light-purple); 
+}
+
+#hug-container { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    pointer-events: none; 
+    z-index: 9999; 
+}
+
+.floating-hug { 
+    position: absolute; 
+    bottom: -50px; 
+    font-size: 30px; 
+    animation: floatup 3s ease-in forwards; 
+}
+
+@keyframes floatup { 
+    0% { transform: translateY(0) scale(1); opacity: 1; } 
+    100% { transform: translateY(-100vh) scale(1.5); opacity: 0; } 
+}
+
+/* =========================================
+   12. EXPANDED QUIZ & HISTORY STYLES
+   ========================================= */
+.quiz-questions {
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 15px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background: var(--off-white);
+}
+
+.question-group {
+    margin-bottom: 20px;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 10px;
+}
+
+.question-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.question-group p {
+    margin-bottom: 8px;
+    color: var(--dark-purple);
+}
+
+.quiz-history {
+    margin-top: 30px;
+}
+
+.quiz-history ul {
+    list-style: none;
+    margin-top: 15px;
+}
+
+.quiz-history li {
+    background: var(--white);
+    padding: 15px;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--hand-font);
+    font-size: 14px;
+}
+/* =========================================
+   13. STRESS RELIEF ZONE (GAMES)
+   ========================================= */
+.stress-container {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.stress-widget {
+    background: var(--white);
+    padding: 25px;
+    border: 2px solid #222;
+    border-radius: 2% 95% 3% 90% / 95% 4% 92% 5%; 
+    flex: 1;
+    min-width: 300px;
+    box-shadow: 4px 5px 0px rgba(0,0,0,0.1);
+    font-family: var(--hand-font);
+}
+
+/* Virtual Bubble Wrap */
+.bubble-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.bubble {
+    width: 45px;
+    height: 45px;
+    background: var(--light-blue);
+    border: 2px solid var(--main-blue);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    box-shadow: inset -3px -3px 8px rgba(0,0,0,0.1);
+}
+
+.bubble.popped {
+    background: var(--off-white);
+    border-color: #ccc;
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
+    transform: scale(0.92);
+}
+
+/* Worry Drop Physics Sandbox */
+.worry-input-area {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+#worry-canvas-container {
+    width: 100%;
+    height: 250px;
+    background: var(--off-white);
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.worry-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
