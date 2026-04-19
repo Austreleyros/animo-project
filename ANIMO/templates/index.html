@@ -1,248 +1,201 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>animo - mental health support</title>
+    <title>Animo - Mental Health Space</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
 </head>
 <body>
-
     <div id="login-overlay" class="overlay">
         <div class="login-box">
-            <h1>animo</h1>
-            <p>a safe space for your mental health</p>
-            
+            <h1>Animo</h1>
+            <p>A Safe Space for Mental Health</p>
             <div class="input-group">
-                <input type="text" id="username" placeholder="username (optional)">
+                <input type="text" id="username" placeholder="Enter optional username...">
             </div>
-            <div class="input-group">
-                <input type="password" id="password" placeholder="password (optional)">
-            </div>
-
             <div class="toggle-container">
+                <label>Stay Anonymous</label>
                 <label class="switch">
                     <input type="checkbox" id="anon-toggle" checked>
-                    <span class="slider round"></span>
+                    <span class="slider"></span>
                 </label>
-                <span>stay anonymous</span>
             </div>
-
-            <button onclick="enterApp()" class="primary-btn">enter space</button>
+            <button class="primary-btn" onclick="enterApp()">Enter Space</button>
         </div>
     </div>
 
     <div id="app-container" class="hidden">
-        <nav class="sidebar">
-            <h2 class="brand">animo</h2>
-            <div class="user-status" id="display-status">status: anonymous</div>
+        <div class="sidebar">
+            <h1 class="brand">Animo</h1>
+            <div id="display-status" class="user-status">Status: Strictly Anonymous</div>
             <ul>
-                <li class="active" onclick="switchTab('dashboard', this)">dashboard</li>
-                <li onclick="switchTab('journal', this)">doodle journal</li>
-                <li onclick="switchTab('mood', this)">mood tracking</li>
-                <li onclick="switchTab('chat', this)">support circles</li>
-                <li onclick="switchTab('coping', this)">📚 coping guides</li>
-                <li onclick="switchTab('stress', this)">🛝 stress relief</li>
-                <li onclick="switchTab('map-view', this)">📍 nearby help</li>
+                <li onclick="switchTab('dashboard', this)" class="active">Dashboard</li>
+                <li onclick="switchTab('journal', this)">Doodle Journal</li>
+                <li onclick="switchTab('mood', this)">Mood Tracking</li>
+                <li onclick="switchTab('support', this)">Support Circles</li>
+                <li onclick="switchTab('coping', this)">Coping Guides</li>
+                <li onclick="switchTab('stress', this)">Stress Relief</li>
+                <li onclick="switchTab('map-view', this)">Nearby Help</li>
             </ul>
-        </nav>
+            
+            <div class="toggle-container" style="margin-top: 30px;">
+                <label id="anon-label" style="font-size: 12px;">Currently Anonymous</label>
+                <label class="switch">
+                    <input type="checkbox" id="in-app-anon-toggle" checked onchange="updateAnonymity()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
 
-        <main class="content">
-            <button class="hug-btn" onclick="sendHug()">✨ send a hug</button>
+        <div class="content">
+            <button class="hug-btn" onclick="sendHug()">✨ Send a Hug</button>
+            <div id="hug-container"></div>
 
-            <section id="dashboard" class="tab-content active">
+            <div id="dashboard" class="tab-content active">
                 <div class="dashboard-header">
-                    <h2>✨ your safe space sketchbook ✨</h2>
-                    <div class="small-toggle">
-                        <label class="switch">
-                            <input type="checkbox" id="in-app-anon-toggle" onchange="updateAnonymity()">
-                            <span class="slider round"></span>
-                        </label>
-                        <span id="anon-label">anonymous</span>
-                    </div>
+                    <h2>Welcome to Your Safe Space</h2>
                 </div>
-                <p class="intro-text">take a deep breath. tap any note to flip it for a new message. stay as long as you need.</p>
                 <div class="sketchbook-board">
-                    <div class="doodle-note shape-circle tilt-right breathing-widget">
-                        <h3>breathe with me</h3>
-                        <div class="breathing-circle"><span id="breathe-text">inhale</span></div>
+                    <div class="doodle-note shape-cloud interactive-note" onclick="flipNote(this)">
+                        <p>Click me for a gentle reminder ✨</p>
                     </div>
                     <div class="doodle-note tilt-left interactive-note" onclick="flipNote(this)">
-                        <h3>🌿 5-4-3-2-1 grounding</h3>
-                        <p>look around you right now and find 5 things you can see, 4 you can touch, 3 you can hear, 2 you can smell, and 1 you can taste.</p>
-                    </div>
-                    <div class="doodle-note tilt-right highlight-purple interactive-note" onclick="flipNote(this)">
-                        <h3>🤍 gentle reminder</h3>
-                        <p>unclench your jaw. drop your shoulders. remove your tongue from the roof of your mouth. take a slow sip of water.</p>
-                    </div>
-                    <div class="doodle-note tilt-left interactive-note" onclick="flipNote(this)">
-                        <h3>☕ you are not alone</h3>
-                        <p>over 60% of college students face mental health issues, yet few seek professional help. it is okay to reach out.</p>
-                    </div>
-                    <div class="doodle-note tilt-left highlight-blue interactive-note" onclick="flipNote(this)">
-                        <h3>💌 professional advice</h3>
-                        <p>"academic stress is temporary, but your well-being is permanent. do not trade your mental health for a grade."</p>
+                        <p>Click me for a soft truth ✨</p>
                     </div>
                     <div class="doodle-note tilt-right interactive-note" onclick="flipNote(this)">
-                        <h3>🦋 fact check</h3>
-                        <p>feeling overwhelmed does not mean you are failing. it means your brain is overloaded. step away from the screen for 10 minutes.</p>
-                    </div>
-                    <div class="doodle-note shape-cloud tilt-left highlight-purple interactive-note" onclick="flipNote(this)">
-                        <p>you have survived 100% of your bad days. ✨</p>
-                    </div>
-                    <div class="doodle-note tilt-right interactive-note" onclick="flipNote(this)">
-                        <h3>🌈 validations</h3>
-                        <p>your feelings make sense. it makes sense that you are tired. give yourself permission to feel it without judging yourself.</p>
+                        <p>Click me for grounding ✨</p>
                     </div>
                 </div>
-            </section>
-
-            <section id="journal" class="tab-content">
-                <h2>your private journal</h2>
-                <p class="intro-text">write your thoughts or draw your stress away. this is for your eyes only.</p>
-                <div class="journal-container">
-                    <div class="notebook-wrapper">
-                        <textarea id="journal-text" placeholder="dear journal, today i felt..."></textarea>
+                <div class="breathing-widget">
+                    <div class="breathing-circle">
+                        <span id="breathe-text">Inhale</span>
                     </div>
+                </div>
+            </div>
+
+            <div id="journal" class="tab-content">
+                <h2>Your Private Journal</h2>
+                <p>Write your thoughts or draw your stress away. This is for your eyes only.</p>
+                <div class="journal-container">
+                    <textarea id="journal-text" placeholder="Dear Journal, today I felt..."></textarea>
                     <div class="canvas-area">
-                        <p>✏️ doodle pad (draw here):</p>
+                        <p>✏️ Doodle Pad (Draw Here):</p>
                         <canvas id="doodle-pad" width="600" height="300"></canvas>
                         <div class="canvas-controls">
-                            <button onclick="clearCanvas()" class="secondary-btn">clear pad</button>
-                            <button onclick="saveJournal()" class="primary-btn save-btn">lock & save securely</button>
-                            <button onclick="viewJournals()" class="secondary-btn">📖 read past entries</button>
+                            <button class="secondary-btn" onclick="clearCanvas()">Clear Canvas</button>
+                            <button class="primary-btn save-btn" onclick="saveJournal()">Lock & Save Journal</button>
+                            <span id="journal-status" class="status-msg"></span>
                         </div>
-                        <p id="journal-status" class="status-msg"></p>
+                    </div>
+                    <button class="secondary-btn" style="margin-top: 15px;" onclick="viewJournals()">View Past Entries</button>
+                    <div id="journal-history" class="hidden">
+                        <div id="journal-history-list" class="sketchbook-board"></div>
                     </div>
                 </div>
-                <div id="journal-history" class="hidden" style="margin-top: 40px; border-top: 2px dashed #eee; padding-top: 30px;">
-                    <h2>your past entries</h2>
-                    <div id="journal-history-list" class="sketchbook-board" style="margin-top: 20px;"></div>
-                </div>
-            </section>
+            </div>
 
-            <section id="mood" class="tab-content">
-                <h2>mood tracking</h2>
-                <div class="mood-selector">
-                    <button class="mood-btn" onclick="logMood('great', '#a5d6a7')">😊 great</button>
-                    <button class="mood-btn" onclick="logMood('okay', '#90caf9')">😐 okay</button>
-                    <button class="mood-btn" onclick="logMood('stressed', '#ce93d8')">😫 stressed</button>
-                    <button class="mood-btn" onclick="logMood('down', '#9fa8da')">😔 down</button>
+            <div id="mood" class="tab-content">
+                <h2>Mood & Check-In</h2>
+                <p>Track how you are feeling today.</p>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="secondary-btn" onclick="logMood('Happy', '#4CAF50')">Happy 😊</button>
+                    <button class="secondary-btn" onclick="logMood('Anxious', '#FFC107')">Anxious 😰</button>
+                    <button class="secondary-btn" onclick="logMood('Tired', '#9E9E9E')">Tired 🥱</button>
+                    <button class="secondary-btn" onclick="logMood('Overwhelmed', '#F44336')">Overwhelmed 🤯</button>
                 </div>
+                <ul id="mood-list" style="margin-top: 20px; list-style: none; display: flex; flex-direction: column; gap: 10px;"></ul>
+
                 <div class="quiz-section">
-                    <h3>deep breath check-in</h3>
-                    <p class="intro-text" style="font-size: 14px; margin-bottom: 15px;">take your time. answer honestly. no one is judging you here.</p>
+                    <h3>Mental Health Check-In Quiz</h3>
+                    <p>Answer honestly to get a personalized recommendation.</p>
                     <div class="quiz-questions">
-                        <div class="question-group"><p>1. i feel overwhelmed by my academic workload:</p><select id="q1"><option value="1">rarely</option><option value="2">sometimes</option><option value="3">often</option></select></div>
-                        <div class="question-group"><p>2. i have trouble falling or staying asleep:</p><select id="q2"><option value="1">rarely</option><option value="2">sometimes</option><option value="3">often</option></select></div>
-                        <div class="question-group"><p>3. i feel isolated or disconnected from my peers:</p><select id="q3"><option value="1">rarely</option><option value="2">sometimes</option><option value="3">often</option></select></div>
-                        <div class="question-group"><p>4. i find it difficult to concentrate:</p><select id="q4"><option value="1">rarely</option><option value="2">sometimes</option><option value="3">often</option></select></div>
-                        <div class="question-group"><p>5. i have lost interest in hobbies:</p><select id="q5"><option value="1">rarely</option><option value="2">sometimes</option><option value="3">often</option></select></div>
-                        <div class="question-group"><p>6. i experience physical tension (headaches/tight jaw):</p><select id="q6"><option value="1">rarely</option><option value="2">sometimes</option><option value="3">often</option></select></div>
-                        <div class="question-group"><p>7. i feel anxious thinking about the future:</p><select id="q7"><option value="1">rarely</option><option value="2">sometimes</option><option value="3">often</option></select></div>
-                        <div class="question-group"><p>8. i find myself getting easily irritated:</p><select id="q8"><option value="1">rarely</option><option value="2">sometimes</option><option value="3">often</option></select></div>
-                        <div class="question-group"><p>9. i feel constantly drained or low on energy:</p><select id="q9"><option value="1">rarely</option><option value="2">sometimes</option><option value="3">often</option></select></div>
-                        <div class="question-group"><p>10. i feel like i lack emotional support right now:</p><select id="q10"><option value="1">rarely</option><option value="2">sometimes</option><option value="3">often</option></select></div>
-                    </div>
-                    <button onclick="submitQuiz()" class="primary-btn submit-quiz">read my heart</button>
+                        <div class="question-group">
+                            <p>1. How often have you felt overwhelmed by your academic workload this week?</p>
+                            <select id="q1"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
+                        </div>
+                        <div class="question-group">
+                            <p>2. How often have you skipped meals or lost sleep due to stress?</p>
+                            <select id="q2"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
+                        </div>
+                        </div>
+                    <button class="primary-btn submit-quiz" onclick="submitQuiz()">Submit Check-In</button>
                     <div id="quiz-result" class="quiz-result-box hidden"></div>
-                    <button id="download-report-btn" class="secondary-btn hidden" onclick="downloadReport()" style="margin-top: 15px; width: 100%;">📥 download anonymous report for counselor</button>
+                    <button id="download-report-btn" class="secondary-btn hidden" style="margin-top: 10px;" onclick="downloadReport()">Download Report</button>
+                    
+                    <div class="quiz-history">
+                        <h4>Past Check-Ins</h4>
+                        <ul id="quiz-history-list"></ul>
+                    </div>
                 </div>
-                <div class="quiz-history">
-                    <h3>your past check-ins</h3>
-                    <ul id="quiz-history-list"></ul>
-                </div>
-                <div class="mood-history" style="margin-top: 30px;">
-                    <h3>quick mood journal</h3>
-                    <ul id="mood-list"></ul>
-                </div>
-            </section>
+            </div>
 
-            <section id="chat" class="tab-content">
-                <h2>support circles</h2>
-                <p>find your people. you are completely anonymous.</p>
+            <div id="support" class="tab-content">
+                <h2>Anonymous Support Circles</h2>
+                <p>Connect with peers who understand exactly what you are going through.</p>
                 <div class="room-selector">
-                    <button class="room-btn active" onclick="switchRoom('midterms')">midterms support</button>
-                    <button class="room-btn" onclick="switchRoom('anxiety')">general anxiety</button>
-                    <button class="room-btn" onclick="switchRoom('mothers')">student mothers circle</button>
+                    <button class="room-btn active" onclick="switchRoom('midterms')">Midterms Support</button>
+                    <button class="room-btn" onclick="switchRoom('anxiety')">General Anxiety</button>
+                    <button class="room-btn" onclick="switchRoom('mothers')">Student Mothers</button>
                 </div>
                 <div class="chat-container">
                     <div class="chat-messages" id="chat-messages">
-                        <div class="message system" id="room-welcome">welcome to the midterms support room.</div>
+                        <div class="message system" id="room-welcome">Welcome to the Midterms Support Room.</div>
                     </div>
                     <div class="chat-input-area">
-                        <input type="text" id="chat-input" placeholder="type a message...">
-                        <button onclick="sendMessage()" class="primary-btn">send</button>
+                        <input type="text" id="chat-input" placeholder="Type a supportive message...">
+                        <button class="primary-btn save-btn" onclick="sendMessage()">Send</button>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section id="coping" class="tab-content">
-                <h2>coping guides library</h2>
-                <p>structured guides to help you manage academic pressure and stress.</p>
-                <div class="sketchbook-board" style="margin-top: 20px;">
-                    <div class="doodle-note tilt-right">
-                        <h3>⏳ time management</h3>
-                        <p><strong>the pomodoro technique:</strong> study for 25 minutes, then take a strict 5-minute break. after 4 cycles, take a 15-minute break. this prevents mental fatigue and burnout.</p>
-                    </div>
-                    <div class="doodle-note tilt-left highlight-blue">
-                        <h3>🛑 panic attack relief</h3>
-                        <p><strong>the 5-4-3-2-1 method:</strong> focus on your surroundings. find 5 things you can see, 4 you can touch, 3 you can hear, 2 you can smell, and 1 you can taste to ground your nervous system.</p>
-                    </div>
-                    <div class="doodle-note tilt-right highlight-purple">
-                        <h3>💤 sleep hygiene</h3>
-                        <p><strong>screen curfew:</strong> stop looking at screens 30 minutes before bed. the blue light suppresses melatonin production, leading to the racing thoughts that keep you awake.</p>
-                    </div>
-                    <div class="doodle-note tilt-left">
-                        <h3>🤱 student mothers</h3>
-                        <p><strong>micro-tasking:</strong> when balancing a child and coursework, don't wait for a 2-hour block. break assignments into 15-minute micro-tasks you can do while the baby naps.</p>
-                    </div>
-                </div>
-            </section>
+            <div id="coping" class="tab-content">
+                <h2>Coping Guides</h2>
+                <p>Explore resources and guides to help manage stress.</p>
+            </div>
 
-            <section id="stress" class="tab-content">
-                <h2>stress relief zone</h2>
-                <p class="intro-text">sometimes you just need a distraction. pop some bubbles or drop your worries. stay as long as you need.</p>
+            <div id="stress" class="tab-content">
+                <h2>Stress Relief Zone</h2>
+                <p>Take a small break. Your brain needs it.</p>
                 
                 <div class="stress-container">
-                    <div class="stress-widget tilt-left">
-                        <h3>⚪ virtual bubble wrap</h3>
-                        <p>click or tap to pop the tension away.</p>
-                        <div id="bubble-wrap-grid" class="bubble-grid"></div>
-                        <button onclick="resetBubbles()" class="secondary-btn" style="margin-top: 15px;">reset bubbles</button>
+                    <div class="stress-widget">
+                        <h3>Virtual Bubble Wrap</h3>
+                        <p style="font-size: 14px; color: var(--text-light); margin-bottom: 10px;">Pop them to release tension.</p>
+                        <button class="secondary-btn" style="font-size: 12px; padding: 5px 10px;" onclick="resetBubbles()">Reset Wrap</button>
+                        <div class="bubble-grid" id="bubble-wrap-grid"></div>
                     </div>
 
-                    <div class="stress-widget tilt-right highlight-purple">
-                        <h3>🧱 the worry drop</h3>
-                        <p>type a worry, drop it in the box, and hit 'let go' to watch them fall away.</p>
+                    <div class="stress-widget">
+                        <h3>The Worry Drop</h3>
+                        <p style="font-size: 14px; color: var(--text-light); margin-bottom: 10px;">Type a worry, drop it into the box, and physically let it go.</p>
+                        
                         <div class="worry-input-area">
-                            <input type="text" id="worry-input" placeholder="what is stressing you out?">
-                            <button onclick="dropWorry()" class="primary-btn" style="margin-top:0; width: 80px;">drop</button>
+                            <input type="text" id="worry-input" placeholder="What is bothering you?">
+                            <button class="primary-btn save-btn" onclick="dropWorry()">Drop It</button>
                         </div>
+                        
                         <div id="worry-canvas-container"></div>
+                        
                         <div class="worry-controls">
-                            <button onclick="shakeWorries()" class="secondary-btn">shake</button>
-                            <button onclick="letGoWorries()" class="secondary-btn" style="color: #d32f2f; border-color: #d32f2f;">let go</button>
+                            <button class="secondary-btn" style="flex:1;" onclick="shakeWorries()">Shake Box</button>
+                            <button class="primary-btn save-btn" style="flex:1;" onclick="letGoWorries()">Let Them Go</button>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section id="map-view" class="tab-content">
-                <h2>nearby support resources</h2>
-                <p>find local counseling centers and safe spaces. tap a pin for details.</p>
-                <div id="gis-map" style="height: 450px; width: 100%; border: 2px solid #333; border-radius: 8px; margin-top: 20px; box-shadow: 4px 5px 0px rgba(0,0,0,0.1);"></div>
-            </section>
-
-        </main>
+            <div id="map-view" class="tab-content">
+                <h2>Nearby Mental Health Resources</h2>
+                <p>Find professional help and safe spaces around you.</p>
+                <div id="gis-map" style="height: 400px; width: 100%; border: 2px solid #333; border-radius: 8px; margin-top: 15px;"></div>
+            </div>
+        </div>
     </div>
 
-    <div id="hug-container"></div>
-    
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
-    
-    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
