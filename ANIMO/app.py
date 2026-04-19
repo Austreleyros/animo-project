@@ -3,7 +3,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# temporary in-memory lists
+# Temporary in-memory lists
 temp_journals = []
 temp_quizzes = []
 
@@ -17,7 +17,7 @@ def save_journal():
     temp_journals.append({
         "username": data.get('username', 'Anonymous'),
         "text": data.get('text'),
-        "image": data.get('image'), # stores the drawing
+        "image": data.get('image'), 
         "date": datetime.now().strftime("%B %d, %Y - %I:%M %p")
     })
     return jsonify({"status": "success", "message": "Journal received securely."}), 201
