@@ -1,7 +1,11 @@
 from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 
-app = Flask(__name__)
+# Explicitly defining folder paths to guarantee connections
+app = Flask(__name__, 
+            static_url_path='/static',
+            static_folder='static',
+            template_folder='templates')
 
 # Temporary in-memory lists
 temp_journals = []
