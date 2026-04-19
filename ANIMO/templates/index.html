@@ -4,10 +4,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animo - Mental Health Space</title>
-    <link rel="stylesheet" href="style.css">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+
+    <style>
+        :root {
+            --white: #ffffff;
+            --off-white: #fcfcf9;
+            --light-purple: #f3e5f5;
+            --main-purple: #9c27b0;
+            --dark-purple: #4a148c;
+            --light-blue: #e3f2fd;
+            --main-blue: #1976d2;
+            --text-dark: #222222;
+            --text-light: #777777;
+            --hand-font: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif; 
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--off-white); color: var(--text-dark); display: flex; height: 100vh; overflow: hidden; }
+        .hidden { display: none !important; }
+        
+        /* Buttons & Inputs */
+        .primary-btn { background-color: var(--main-purple); color: var(--white); border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; margin-top: 20px; font-family: var(--hand-font); transition: background-color 0.3s ease; }
+        .primary-btn:hover { background-color: var(--dark-purple); }
+        .secondary-btn { background-color: transparent; color: var(--text-dark); border: 2px solid var(--text-dark); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: var(--hand-font); }
+        .input-group { margin: 15px 0; }
+        .input-group input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; background-color: var(--off-white); }
+        
+        /* Toggles */
+        .toggle-container { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px; color: var(--text-light); }
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--main-blue); }
+        input:checked + .slider:before { transform: translateX(26px); }
+        
+        /* Login Overlay */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--light-purple); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .login-box { background: var(--white); padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; width: 100%; max-width: 400px; }
+        .login-box h1 { color: var(--main-purple); margin-bottom: 10px; font-family: var(--hand-font); }
+        
+        /* Layout */
+        #app-container { display: flex; width: 100%; height: 100%; }
+        .sidebar { width: 250px; background-color: var(--white); padding: 30px 20px; border-right: 2px dashed #eee; }
+        .brand { color: var(--main-purple); margin-bottom: 5px; font-family: var(--hand-font); font-size: 28px; }
+        .user-status { font-size: 12px; color: var(--main-blue); margin-bottom: 30px; padding-bottom: 10px; border-bottom: 2px dashed #eee; }
+        .sidebar ul { list-style: none; }
+        .sidebar li { padding: 12px 15px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; color: var(--text-dark); font-family: var(--hand-font); font-size: 18px; transition: background 0.3s ease; }
+        .sidebar li:hover { background-color: var(--light-purple); color: var(--dark-purple); }
+        .sidebar li.active { font-weight: bold; color: var(--main-purple); }
+        .content { flex: 1; padding: 40px; overflow-y: auto; background-image: radial-gradient(#e0e0e0 1px, transparent 1px); background-size: 20px 20px; position: relative; }
+        .tab-content { display: none; animation: fadein 0.5s; }
+        .tab-content.active { display: block; }
+        @keyframes fadein { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Dashboard & Notes */
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .dashboard-header h2 { font-family: var(--hand-font); color: var(--dark-purple); }
+        .sketchbook-board { display: flex; flex-wrap: wrap; gap: 25px; align-items: flex-start; }
+        .doodle-note { background: var(--white); padding: 25px; width: calc(33.333% - 20px); min-width: 250px; font-family: var(--hand-font); color: var(--text-dark); border: 2px solid #222; border-radius: 2% 95% 3% 90% / 95% 4% 92% 5%; box-shadow: 3px 4px 0px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, box-shadow 0.3s ease; }
+        .interactive-note { cursor: pointer; }
+        .interactive-note:hover { transform: scale(1.05) rotate(0deg); z-index: 10; box-shadow: 5px 8px 0px rgba(0,0,0,0.15); }
+        .doodle-note.flipping { transform: rotateY(90deg) scale(1.05) !important; opacity: 0.2; }
+        .tilt-left { transform: rotate(-3deg); }
+        .tilt-right { transform: rotate(2deg); }
+        .highlight-purple { background-color: #faf5ff; border-color: var(--main-purple); }
+        .shape-cloud { border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; border-style: dashed; text-align: center; font-size: 1.3rem; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+        
+        /* Breathing Widget */
+        .breathing-widget { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 250px; }
+        .breathing-circle { width: 100px; height: 100px; background-color: var(--light-purple); border: 3px dashed var(--main-purple); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: breathe 10s infinite ease-in-out; margin-top: 20px; }
+        @keyframes breathe { 0% { transform: scale(1); background-color: var(--light-purple); } 40% { transform: scale(1.6); background-color: #d1c4e9; } 50% { transform: scale(1.6); } 90% { transform: scale(1); background-color: var(--light-purple); } 100% { transform: scale(1); } }
+        
+        /* Journal */
+        .journal-container { display: flex; flex-direction: column; gap: 30px; margin-top: 20px; }
+        #journal-text { width: 100%; height: 250px; padding: 35px 20px 20px 60px; font-family: var(--hand-font); font-size: 18px; line-height: 30px; border: 2px solid #222; border-radius: 2% 98% 3% 95% / 95% 3% 92% 5%; resize: vertical; background-color: var(--white); color: var(--dark-purple); box-shadow: 4px 5px 0px rgba(0,0,0,0.1); background-image: linear-gradient(90deg, transparent 50px, #ffb3b3 50px, #ffb3b3 52px, transparent 52px), repeating-linear-gradient(transparent, transparent 29px, #e0e0e0 29px, #e0e0e0 30px); }
+        #journal-text:focus { outline: none; border-color: var(--main-purple); }
+        .canvas-area { background: var(--white); padding: 25px; border: 2px solid #222; border-radius: 3% 95% 2% 98% / 95% 4% 95% 3%; box-shadow: 4px 5px 0px rgba(0,0,0,0.1); }
+        .canvas-area p { font-family: var(--hand-font); color: var(--dark-purple); font-size: 18px; margin-bottom: 15px; }
+        #doodle-pad { border: 2px dashed #ccc; background: var(--off-white); cursor: crosshair; margin-bottom: 20px; width: 100%; border-radius: 8px; touch-action: none; }
+        .canvas-controls { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        .save-btn { width: auto; margin-top: 0; }
+        .status-msg { color: var(--main-blue); font-family: var(--hand-font); font-size: 14px; margin-top: 10px; }
+        
+        /* Quiz & Chat & Games */
+        .quiz-section { background: var(--white); padding: 20px; border: 2px solid #333; border-radius: 8px; margin-top: 20px; font-family: var(--hand-font); }
+        .quiz-section select { margin: 10px 0 20px 0; padding: 8px; font-family: var(--hand-font); border-radius: 4px; }
+        .quiz-result-box { margin-top: 15px; padding: 15px; background: var(--light-blue); border-radius: 8px; }
+        .room-selector { display: flex; gap: 10px; margin-bottom: 15px; }
+        .room-btn { padding: 10px 15px; background: var(--white); border: 2px solid #333; border-radius: 20px; cursor: pointer; font-family: var(--hand-font); }
+        .room-btn.active { background: var(--light-purple); border-color: var(--main-purple); font-weight: bold; }
+        .chat-container { background: var(--white); border: 2px solid #333; height: 350px; display: flex; flex-direction: column; border-radius: 1% 98% 2% 95% / 95% 2% 98% 3%; box-shadow: 4px 5px 0px rgba(0,0,0,0.1); }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; }
+        .message { margin-bottom: 15px; padding: 10px 15px; border-radius: 15px; max-width: 70%; font-family: var(--hand-font); }
+        .system { background-color: var(--light-blue); margin: 0 auto; text-align: center; font-size: 12px; }
+        .user { background-color: var(--main-purple); color: var(--white); margin-left: auto; border-bottom-right-radius: 2px; }
+        .chat-input-area { display: flex; padding: 15px; border-top: 2px solid #333; }
+        .chat-input-area input { flex: 1; padding: 12px; border: 2px solid #ddd; margin-right: 10px; font-family: var(--hand-font); border-radius: 8px; }
+        .stress-container { display: flex; gap: 25px; flex-wrap: wrap; margin-top: 20px; }
+        .stress-widget { background: var(--white); padding: 25px; border: 2px solid #222; border-radius: 2% 95% 3% 90% / 95% 4% 92% 5%; flex: 1; min-width: 300px; box-shadow: 4px 5px 0px rgba(0,0,0,0.1); font-family: var(--hand-font); }
+        .bubble-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 12px; margin-top: 15px; }
+        .bubble { width: 45px; height: 45px; background: var(--light-blue); border: 2px solid var(--main-blue); border-radius: 50%; cursor: pointer; transition: all 0.1s ease; box-shadow: inset -3px -3px 8px rgba(0,0,0,0.1); }
+        .bubble.popped { background: var(--off-white); border-color: #ccc; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); transform: scale(0.92); }
+        .worry-input-area { display: flex; gap: 10px; margin: 15px 0; }
+        #worry-canvas-container { width: 100%; height: 250px; background: var(--off-white); border: 2px dashed #ccc; border-radius: 8px; overflow: hidden; }
+        .hug-btn { position: absolute; top: 40px; right: 40px; background: var(--white); border: 2px dashed var(--main-purple); padding: 10px 20px; border-radius: 30px; cursor: pointer; font-family: var(--hand-font); color: var(--main-purple); z-index: 100; transition: transform 0.2s; }
+        .hug-btn:hover { transform: scale(1.1); background: var(--light-purple); }
+        #hug-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+        .floating-hug { position: absolute; bottom: -50px; font-size: 30px; animation: floatup 3s ease-in forwards; }
+        @keyframes floatup { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100vh) scale(1.5); opacity: 0; } }
+
+        /* Mobile Responsiveness */
+        @media screen and (max-width: 768px) {
+            #app-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; padding: 15px; border-right: none; border-bottom: 2px dashed #eee; flex-shrink: 0; z-index: 10; }
+            .sidebar ul { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+            .sidebar li { white-space: nowrap; margin-bottom: 0; font-size: 16px; padding: 8px 15px; }
+            .content { padding: 20px 15px; }
+            .doodle-note { width: 100%; min-width: unset; }
+            .hug-btn { top: auto; bottom: 20px; right: 20px; position: fixed; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+            .login-box { padding: 30px 20px; width: 90%; }
+            #journal-text { padding: 35px 15px 15px 40px; }
+        }
+    </style>
 </head>
 <body>
     <div id="login-overlay" class="overlay">
@@ -101,7 +222,7 @@
             <div id="mood" class="tab-content">
                 <h2>Mood & Check-In</h2>
                 <p>Track how you are feeling today.</p>
-                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
                     <button class="secondary-btn" onclick="logMood('Happy', '#4CAF50')">Happy 😊</button>
                     <button class="secondary-btn" onclick="logMood('Anxious', '#FFC107')">Anxious 😰</button>
                     <button class="secondary-btn" onclick="logMood('Tired', '#9E9E9E')">Tired 🥱</button>
@@ -111,31 +232,23 @@
 
                 <div class="quiz-section">
                     <h3>Mental Health Check-In Quiz</h3>
-                    <p>Answer honestly to get a personalized recommendation.</p>
-                    <div class="quiz-questions">
-                        <div class="question-group">
-                            <p>1. How often have you felt overwhelmed by your academic workload this week?</p>
-                            <select id="q1"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
-                        </div>
-                        <div class="question-group">
-                            <p>2. How often have you skipped meals or lost sleep due to stress?</p>
-                            <select id="q2"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
-                        </div>
+                    <div class="question-group">
+                        <p>1. How often have you felt overwhelmed by your academic workload this week?</p>
+                        <select id="q1"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
+                    </div>
+                    <div class="question-group">
+                        <p>2. How often have you skipped meals or lost sleep due to stress?</p>
+                        <select id="q2"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
                     </div>
                     <button class="primary-btn submit-quiz" onclick="submitQuiz()">Submit Check-In</button>
                     <div id="quiz-result" class="quiz-result-box hidden"></div>
                     <button id="download-report-btn" class="secondary-btn hidden" style="margin-top: 10px;" onclick="downloadReport()">Download Report</button>
-                    
-                    <div class="quiz-history">
-                        <h4>Past Check-Ins</h4>
-                        <ul id="quiz-history-list"></ul>
-                    </div>
+                    <ul id="quiz-history-list" style="margin-top:15px; list-style:none;"></ul>
                 </div>
             </div>
 
             <div id="support" class="tab-content">
                 <h2>Anonymous Support Circles</h2>
-                <p>Connect with peers who understand exactly what you are going through.</p>
                 <div class="room-selector">
                     <button class="room-btn active" onclick="switchRoom('midterms')">Midterms Support</button>
                     <button class="room-btn" onclick="switchRoom('anxiety')">General Anxiety</button>
@@ -159,30 +272,22 @@
 
             <div id="stress" class="tab-content">
                 <h2>Stress Relief Zone</h2>
-                <p>Take a small break. Your brain needs it.</p>
-                
                 <div class="stress-container">
                     <div class="stress-widget">
                         <h3>Virtual Bubble Wrap</h3>
-                        <p style="font-size: 14px; color: var(--text-light); margin-bottom: 10px;">Pop them to release tension.</p>
-                        <button class="secondary-btn" style="font-size: 12px; padding: 5px 10px;" onclick="resetBubbles()">Reset Wrap</button>
+                        <button class="secondary-btn" style="font-size: 12px; padding: 5px 10px; margin-top: 10px;" onclick="resetBubbles()">Reset Wrap</button>
                         <div class="bubble-grid" id="bubble-wrap-grid"></div>
                     </div>
-
                     <div class="stress-widget">
                         <h3>The Worry Drop</h3>
-                        <p style="font-size: 14px; color: var(--text-light); margin-bottom: 10px;">Type a worry, drop it into the box, and physically let it go.</p>
-                        
                         <div class="worry-input-area">
                             <input type="text" id="worry-input" placeholder="What is bothering you?">
                             <button class="primary-btn save-btn" onclick="dropWorry()">Drop It</button>
                         </div>
-                        
                         <div id="worry-canvas-container"></div>
-                        
                         <div class="worry-controls">
                             <button class="secondary-btn" style="flex:1;" onclick="shakeWorries()">Shake Box</button>
-                            <button class="primary-btn save-btn" style="flex:1;" onclick="letGoWorries()">Let Them Go</button>
+                            <button class="primary-btn save-btn" style="flex:1;" onclick="letGoWorries()">Let Go</button>
                         </div>
                     </div>
                 </div>
@@ -190,14 +295,289 @@
 
             <div id="map-view" class="tab-content">
                 <h2>Nearby Mental Health Resources</h2>
-                <p>Find professional help and safe spaces around you.</p>
                 <div id="gis-map" style="height: 400px; width: 100%; border: 2px solid #333; border-radius: 8px; margin-top: 15px;"></div>
             </div>
         </div>
     </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    
-    <script src="script.js"></script>
+
+    <script>
+        let isanonymous = true;
+        let currentusername = "Anonymous User";
+        let currentroom = "midterms";
+        let resourceMap;
+
+        function enterApp() {
+            const toggle = document.getElementById('anon-toggle');
+            isanonymous = toggle.checked;
+            if (!isanonymous) {
+                const usernameinput = document.getElementById('username').value;
+                currentusername = usernameinput || "Student User";
+            }
+            document.getElementById('in-app-anon-toggle').checked = isanonymous;
+            document.getElementById('login-overlay').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            
+            updateDisplayStatus();
+            initBreathingText();
+            initCanvas();
+            initMap();
+        }
+
+        function switchTab(tabid, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabid).classList.add('active');
+            
+            document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
+            if (element) { element.classList.add('active'); }
+            
+            if (tabid === 'map-view' && resourceMap) { setTimeout(() => { resourceMap.invalidateSize(); }, 100); }
+            if (tabid === 'stress') { initBubbles(); setTimeout(() => { initWorryDrop(); }, 100); }
+        }
+
+        function updateAnonymity() {
+            isanonymous = document.getElementById('in-app-anon-toggle').checked;
+            updateDisplayStatus();
+        }
+
+        function updateDisplayStatus() {
+            const statusbox = document.getElementById('display-status');
+            const labelbox = document.getElementById('anon-label');
+            if (isanonymous) {
+                statusbox.innerText = "Status: Strictly Anonymous";
+                labelbox.innerText = "Currently Anonymous";
+            } else {
+                statusbox.innerText = `Status: Logged in as ${currentusername}`;
+                labelbox.innerText = "Currently Visible";
+            }
+        }
+
+        function initMap() {
+            if(resourceMap) return; // Prevent double initialization
+            resourceMap = L.map('gis-map').setView([8.9500, 125.5650], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(resourceMap);
+            L.marker([8.9554, 125.5973]).addTo(resourceMap).bindPopup('CSU University Clinic');
+        }
+
+        function initBreathingText() {
+            const textel = document.getElementById('breathe-text');
+            setInterval(() => {
+                setTimeout(() => { textel.innerText = "Hold"; }, 4000);
+                setTimeout(() => { textel.innerText = "Exhale"; }, 5000);
+                setTimeout(() => { textel.innerText = "Inhale"; }, 9000);
+            }, 10000);
+        }
+
+        const safeSpaceMessages = [
+            { title: "🤍 Gentle Reminder", content: "Unclench your jaw. Drop your shoulders." },
+            { title: "🦋 Fact Check", content: "Feeling overwhelmed does not mean you are failing." },
+            { title: "💧 Hydration Check", content: "Go drink a glass of water." }
+        ];
+
+        function flipNote(element) {
+            element.classList.add('flipping');
+            setTimeout(() => {
+                const randomMsg = safeSpaceMessages[Math.floor(Math.random() * safeSpaceMessages.length)];
+                if (element.classList.contains('shape-cloud')) {
+                    element.innerHTML = `<p>${randomMsg.content} ✨</p>`;
+                } else {
+                    element.innerHTML = `<h3>${randomMsg.title}</h3><p>${randomMsg.content}</p>`;
+                }
+                element.classList.remove('flipping');
+            }, 150); 
+        }
+
+        let canvas, ctx, isdrawing = false, hasDrawn = false;
+
+        function initCanvas() {
+            canvas = document.getElementById('doodle-pad');
+            ctx = canvas.getContext('2d');
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#4a148c';
+            
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            canvas.addEventListener('touchstart', startDrawing, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+            canvas.addEventListener('touchend', stopDrawing);
+        }
+
+        function getCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        }
+
+        function startDrawing(e) { 
+            if (e.cancelable) e.preventDefault(); 
+            isdrawing = true; hasDrawn = true; 
+            const coords = getCoordinates(e);
+            ctx.beginPath(); ctx.moveTo(coords.x, coords.y);
+        }
+
+        function draw(e) {
+            if (!isdrawing) return;
+            if (e.cancelable) e.preventDefault(); 
+            const coords = getCoordinates(e);
+            ctx.lineTo(coords.x, coords.y); ctx.stroke();
+        }
+
+        function stopDrawing(e) { 
+            if (e && e.cancelable) e.preventDefault();
+            isdrawing = false; ctx.beginPath(); 
+        }
+
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); hasDrawn = false; }
+
+        async function saveJournal() {
+            const textElement = document.getElementById('journal-text');
+            const text = textElement.value.trim();
+            const statusmsg = document.getElementById('journal-status');
+            
+            if (!text && !hasDrawn) {
+                statusmsg.innerText = "Please write or draw something first.";
+                setTimeout(() => { statusmsg.innerText = ""; }, 3000);
+                return;
+            }
+            statusmsg.innerText = "Saving securely...";
+            
+            const imageData = hasDrawn ? canvas.toDataURL('image/png') : null;
+            
+            try {
+                const response = await fetch('/api/journal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentusername, text: text, image: imageData })
+                });
+                
+                if(response.ok) {
+                    statusmsg.innerText = "Journal locked and saved safely."; 
+                    textElement.value = ''; clearCanvas(); 
+                    setTimeout(() => { statusmsg.innerText = ""; }, 3000);
+                    if (!document.getElementById('journal-history').classList.contains('hidden')) { viewJournals(); }
+                }
+            } catch (error) {
+                statusmsg.innerText = "Error saving. Make sure Flask is running.";
+            }
+        }
+        
+        async function viewJournals() {
+            const historyContainer = document.getElementById('journal-history');
+            const historyList = document.getElementById('journal-history-list');
+            historyContainer.classList.remove('hidden');
+            historyList.innerHTML = '<p style="font-family: var(--hand-font);">Unlocking Journal...</p>';
+            try {
+                const response = await fetch(`/api/journal?username=${encodeURIComponent(currentusername)}`);
+                const entries = await response.json();
+                historyList.innerHTML = ''; 
+                if (entries.length === 0) {
+                    historyList.innerHTML = '<p style="font-family: var(--hand-font); color: var(--text-light);">No past entries found. Start writing above!</p>';
+                    return;
+                }
+                entries.reverse().forEach((entry, index) => {
+                    const note = document.createElement('div');
+                    const tilt = index % 2 === 0 ? 'tilt-left' : 'tilt-right';
+                    note.className = `doodle-note ${tilt}`;
+                    note.style.width = '100%'; 
+                    let entryHTML = `<p style="font-size: 12px; color: var(--main-purple); margin-bottom: 10px;">📅 ${entry.date}</p>`;
+                    if (entry.text) { entryHTML += `<p style="white-space: pre-wrap; margin-bottom: 15px;">${entry.text}</p>`; }
+                    if (entry.image) { entryHTML += `<img src="${entry.image}" style="max-width: 100%; border: 2px dashed #ccc; border-radius: 8px; background: #fff; margin-top: 10px;" alt="journal doodle">`; }
+                    note.innerHTML = entryHTML;
+                    historyList.appendChild(note);
+                });
+            } catch (error) { historyList.innerHTML = '<p style="font-family: var(--hand-font); color: red;">Error reading journal. Is the Python server running?</p>'; }
+        }
+
+        function logMood(moodtext, colorcode) {
+            const list = document.getElementById('mood-list');
+            const entry = document.createElement('li');
+            entry.innerHTML = `<span style="color:${colorcode}">●</span> Felt ${moodtext}`;
+            list.insertBefore(entry, list.firstChild);
+        }
+
+        function submitQuiz() {
+            document.getElementById('quiz-result').innerText = "Thank you for checking in. Take a deep breath.";
+            document.getElementById('quiz-result').classList.remove('hidden');
+        }
+
+        function switchRoom(roomid) {
+            document.querySelectorAll('.room-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('room-welcome').innerText = `Welcome to the ${roomid} room.`;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            if (input.value.trim() === "") return;
+            const msgdiv = document.createElement('div');
+            msgdiv.className = 'message user';
+            msgdiv.innerText = input.value;
+            document.getElementById('chat-messages').appendChild(msgdiv);
+            input.value = "";
+        }
+
+        function sendHug() {
+            const container = document.getElementById('hug-container');
+            const hug = document.createElement('div');
+            hug.className = 'floating-hug';
+            hug.innerText = '🫂';
+            hug.style.left = `${Math.random() * window.innerWidth}px`;
+            container.appendChild(hug);
+            setTimeout(() => container.removeChild(hug), 3000);
+        }
+
+        function initBubbles() {
+            const grid = document.getElementById('bubble-wrap-grid');
+            grid.innerHTML = '';
+            for(let i = 0; i < 35; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.onclick = function() { this.classList.add('popped'); };
+                grid.appendChild(bubble);
+            }
+        }
+        function resetBubbles() { initBubbles(); }
+
+        let worryEngine;
+        function initWorryDrop() {
+            if(worryEngine) return; 
+            worryEngine = Matter.Engine.create();
+            const render = Matter.Render.create({
+                element: document.getElementById('worry-canvas-container'),
+                engine: worryEngine,
+                options: { width: 400, height: 250, wireframes: false, background: 'transparent' }
+            });
+            Matter.Composite.add(worryEngine.world, [
+                Matter.Bodies.rectangle(200, 250, 400, 20, { isStatic: true })
+            ]);
+            Matter.Render.run(render);
+            Matter.Runner.run(Matter.Runner.create(), worryEngine);
+        }
+
+        function dropWorry() {
+            const text = document.getElementById('worry-input').value;
+            if(!text) return;
+            const block = Matter.Bodies.rectangle(200 + (Math.random()*40-20), 0, 80, 40, { restitution: 0.5 });
+            Matter.Composite.add(worryEngine.world, block);
+            document.getElementById('worry-input').value = '';
+        }
+
+        function shakeWorries() {
+            Matter.Composite.allBodies(worryEngine.world).forEach(body => {
+                if(!body.isStatic) Matter.Body.applyForce(body, body.position, { x: 0, y: -0.05 });
+            });
+        }
+
+        function letGoWorries() {
+            Matter.Composite.clear(worryEngine.world);
+            Matter.Composite.add(worryEngine.world, [Matter.Bodies.rectangle(200, 250, 400, 20, { isStatic: true })]);
+        }
+    </script>
 </body>
 </html>
