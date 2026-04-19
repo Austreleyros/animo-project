@@ -49,7 +49,7 @@ function updateDisplayStatus() {
 }
 
 function initMap() {
-    if(resourceMap) return; // Prevent double initialization
+    if(resourceMap) return; 
     resourceMap = L.map('gis-map').setView([8.9500, 125.5650], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(resourceMap);
     L.marker([8.9554, 125.5973]).addTo(resourceMap).bindPopup('CSU University Clinic');
@@ -64,23 +64,48 @@ function initBreathingText() {
     }, 10000);
 }
 
+// Restored expanded array to prevent repeating duplicate messages
 const safeSpaceMessages = [
-    { title: "🤍 Gentle Reminder", content: "Unclench your jaw. Drop your shoulders." },
-    { title: "🦋 Fact Check", content: "Feeling overwhelmed does not mean you are failing." },
-    { title: "💧 Hydration Check", content: "Go drink a glass of water." }
+    { title: "🤍 Gentle Reminder", content: "Unclench your jaw. Drop your shoulders. Remove your tongue from the roof of your mouth." },
+    { title: "🤍 Gentle Reminder", content: "You do not have to earn your rest. You deserve rest simply because you are a human being." },
+    { title: "🦋 Fact Check", content: "Feeling overwhelmed does not mean you are failing. It means your brain is overloaded. Step away." },
+    { title: "🧠 Brain Fact", content: "Your brain consumes 20% of your body's energy. Studying hard is literally exhausting. Go eat a snack." },
+    { title: "💧 Hydration Check", content: "Your brain is 73% water. Poor hydration mimics the symptoms of anxiety. Go drink a glass of water." },
+    { title: "🌈 Validation", content: "Your feelings make sense. Give yourself permission to feel it without judging yourself." },
+    { title: "🌿 Grounding", content: "Look around right now: find 5 things you can see, 4 you can touch, and 3 you can hear." },
+    { title: "📚 Study Tip", content: "The Pomodoro technique (25 mins work, 5 mins rest) prevents academic burnout. Don't marathon study." },
+    { title: "📉 Perspective", content: "A bad grade is a reflection of a single moment in time, not a reflection of your intelligence or worth." },
+    { title: "✨ Soft Truth", content: "Rest is not a reward for finishing your modules. Rest is a basic human need." }
 ];
 
 function flipNote(element) {
+    // Prevent the user from double-clicking and breaking the animation
+    if (element.classList.contains('flipping')) return;
+
+    // Start the flip animation (takes 300ms in CSS)
     element.classList.add('flipping');
+    
+    // Wait exactly 300ms for the card to rotate 90 degrees (invisible) before swapping text
     setTimeout(() => {
         const randomMsg = safeSpaceMessages[Math.floor(Math.random() * safeSpaceMessages.length)];
+        
         if (element.classList.contains('shape-cloud')) {
             element.innerHTML = `<p>${randomMsg.content} ✨</p>`;
         } else {
             element.innerHTML = `<h3>${randomMsg.title}</h3><p>${randomMsg.content}</p>`;
         }
+
+        // Randomize colors for a fresh look
+        element.classList.remove('highlight-purple', 'highlight-blue');
+        if (Math.random() > 0.5) {
+            element.classList.add('highlight-purple');
+        } else {
+            element.classList.add('highlight-blue');
+        }
+        
+        // Remove class to flip the card back to normal, revealing the new text
         element.classList.remove('flipping');
-    }, 150); 
+    }, 300); 
 }
 
 let canvas, ctx, isdrawing = false, hasDrawn = false;
