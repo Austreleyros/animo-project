@@ -253,11 +253,9 @@ input:checked + .slider:before {
     font-family: var(--hand-font); color: var(--text-dark); 
     border: 2px solid #222; border-radius: 2% 95% 3% 90% / 95% 4% 92% 5%; 
     box-shadow: 3px 4px 0px rgba(0,0,0,0.1); 
-    /* added transform timing for the flip animation */
     transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, box-shadow 0.3s ease; 
 }
 
-/* NEW: styles for notes that can be clicked */
 .interactive-note {
     cursor: pointer;
 }
@@ -267,7 +265,6 @@ input:checked + .slider:before {
     box-shadow: 5px 8px 0px rgba(0,0,0,0.15);
 }
 
-/* NEW: the 3d flip animation state */
 .doodle-note.flipping {
     transform: rotateY(90deg) scale(1.05) !important;
     opacity: 0.2;
@@ -277,6 +274,7 @@ input:checked + .slider:before {
 .tilt-right { transform: rotate(2deg); }
 .highlight-purple { background-color: #faf5ff; border-color: var(--main-purple); }
 .shape-cloud { border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; border-style: dashed; text-align: center; font-size: 1.3rem; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+
 /* =========================================
    7. BREATHING WIDGET
    ========================================= */
@@ -319,24 +317,19 @@ input:checked + .slider:before {
     margin-top: 20px; 
 }
 
-/* The Lined Paper Effect */
 #journal-text { 
     width: 100%; 
     height: 250px; 
-    /* Padding left creates space for the red margin line */
     padding: 35px 20px 20px 60px; 
     font-family: var(--hand-font); 
     font-size: 18px; 
-    line-height: 30px; /* This must match the repeating gradient size below */
+    line-height: 30px; 
     border: 2px solid #222; 
-    /* Wonky hand-drawn border */
     border-radius: 2% 98% 3% 95% / 95% 3% 92% 5%; 
     resize: vertical; 
     background-color: var(--white); 
     color: var(--dark-purple);
     box-shadow: 4px 5px 0px rgba(0,0,0,0.1);
-    
-    /* Creates the ruled lines and the vertical red margin line */
     background-image: 
         linear-gradient(90deg, transparent 50px, #ffb3b3 50px, #ffb3b3 52px, transparent 52px),
         repeating-linear-gradient(transparent, transparent 29px, #e0e0e0 29px, #e0e0e0 30px);
@@ -375,7 +368,7 @@ input:checked + .slider:before {
     display: flex;
     gap: 15px;
     align-items: center;
-    flex-wrap: wrap; /* NEW: Allows the 3 buttons to wrap on smaller screens */
+    flex-wrap: wrap; 
 }
 
 .save-btn { 
@@ -389,6 +382,7 @@ input:checked + .slider:before {
     font-size: 14px; 
     margin-top: 10px;
 }
+
 /* =========================================
    9. MOOD TRACKER & QUIZ
    ========================================= */
@@ -615,7 +609,6 @@ input:checked + .slider:before {
     font-family: var(--hand-font);
 }
 
-/* Virtual Bubble Wrap */
 .bubble-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
@@ -641,7 +634,6 @@ input:checked + .slider:before {
     transform: scale(0.92);
 }
 
-/* Worry Drop Physics Sandbox */
 .worry-input-area {
     display: flex;
     gap: 10px;
@@ -667,12 +659,10 @@ input:checked + .slider:before {
    14. MOBILE RESPONSIVENESS
    ========================================= */
 @media screen and (max-width: 768px) {
-    /* Change main layout to stack vertically */
     #app-container {
         flex-direction: column;
     }
 
-    /* Transform Sidebar into a horizontal scrollable top menu */
     .sidebar {
         width: 100%;
         height: auto;
@@ -700,7 +690,7 @@ input:checked + .slider:before {
         overflow-x: auto;
         gap: 10px;
         padding-bottom: 5px;
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        -webkit-overflow-scrolling: touch; 
     }
 
     .sidebar li {
@@ -714,14 +704,12 @@ input:checked + .slider:before {
         padding: 20px 15px;
     }
 
-    /* Dashboard Header */
     .dashboard-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
     }
 
-    /* Sketchbook Notes */
     .sketchbook-board {
         flex-direction: column;
         gap: 15px;
@@ -732,7 +720,6 @@ input:checked + .slider:before {
         min-width: unset;
     }
 
-    /* Fix the Hug Button so it doesn't overlap text */
     .hug-btn {
         top: auto;
         bottom: 20px;
@@ -741,9 +728,8 @@ input:checked + .slider:before {
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    /* Journal Adjustments */
     #journal-text {
-        padding: 35px 15px 15px 40px; /* Reduces left padding for smaller screens */
+        padding: 35px 15px 15px 40px; 
     }
 
     .canvas-controls {
@@ -755,7 +741,6 @@ input:checked + .slider:before {
         width: 100%;
     }
 
-    /* Stress Games Adjustments */
     .stress-container {
         flex-direction: column;
     }
@@ -764,7 +749,6 @@ input:checked + .slider:before {
         min-width: 100%;
     }
 
-    /* Fix Login Screen on Mobile */
     .login-box {
         padding: 30px 20px;
         width: 90%;
