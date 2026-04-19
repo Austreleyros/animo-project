@@ -243,9 +243,6 @@ input:checked + .slider:before {
 /* =========================================
    6. DASHBOARD & DOODLE NOTES
    ========================================= */
-/* =========================================
-   6. DASHBOARD & DOODLE NOTES
-   ========================================= */
 .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .dashboard-header h2 { font-family: var(--hand-font); color: var(--dark-purple); }
 .small-toggle { display: flex; align-items: center; gap: 10px; padding: 10px 15px; border-radius: 30px; background: var(--white); border: 2px solid #333; }
@@ -312,9 +309,6 @@ input:checked + .slider:before {
     100% { transform: scale(1); } 
 }
 
-/* =========================================
-   8. PRIVATE DOODLE JOURNAL
-   ========================================= */
 /* =========================================
    8. PRIVATE DOODLE JOURNAL (NOTEBOOK STYLE)
    ========================================= */
@@ -599,6 +593,7 @@ input:checked + .slider:before {
     font-family: var(--hand-font);
     font-size: 14px;
 }
+
 /* =========================================
    13. STRESS RELIEF ZONE (GAMES)
    ========================================= */
@@ -666,4 +661,117 @@ input:checked + .slider:before {
     display: flex;
     gap: 10px;
     margin-top: 15px;
+}
+
+/* =========================================
+   14. MOBILE RESPONSIVENESS
+   ========================================= */
+@media screen and (max-width: 768px) {
+    /* Change main layout to stack vertically */
+    #app-container {
+        flex-direction: column;
+    }
+
+    /* Transform Sidebar into a horizontal scrollable top menu */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 15px;
+        border-right: none;
+        border-bottom: 2px dashed #eee;
+        flex-shrink: 0;
+        z-index: 10;
+    }
+
+    .brand {
+        text-align: center;
+        font-size: 24px;
+    }
+
+    .user-status {
+        text-align: center;
+        margin-bottom: 15px;
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .sidebar ul {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        padding-bottom: 5px;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+
+    .sidebar li {
+        white-space: nowrap;
+        margin-bottom: 0;
+        font-size: 16px;
+        padding: 8px 15px;
+    }
+
+    .content {
+        padding: 20px 15px;
+    }
+
+    /* Dashboard Header */
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    /* Sketchbook Notes */
+    .sketchbook-board {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .doodle-note {
+        width: 100%;
+        min-width: unset;
+    }
+
+    /* Fix the Hug Button so it doesn't overlap text */
+    .hug-btn {
+        top: auto;
+        bottom: 20px;
+        right: 20px;
+        position: fixed;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Journal Adjustments */
+    #journal-text {
+        padding: 35px 15px 15px 40px; /* Reduces left padding for smaller screens */
+    }
+
+    .canvas-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .canvas-controls button {
+        width: 100%;
+    }
+
+    /* Stress Games Adjustments */
+    .stress-container {
+        flex-direction: column;
+    }
+
+    .stress-widget {
+        min-width: 100%;
+    }
+
+    /* Fix Login Screen on Mobile */
+    .login-box {
+        padding: 30px 20px;
+        width: 90%;
+    }
+    
+    .toggle-container {
+        flex-direction: column;
+        gap: 5px;
+    }
 }
