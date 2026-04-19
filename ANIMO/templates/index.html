@@ -142,6 +142,7 @@
 
                 <div class="quiz-section">
                     <h3>Mental Health Check-In Quiz</h3>
+                    
                     <div class="question-group">
                         <p>1. How often have you felt overwhelmed by your academic workload this week?</p>
                         <select id="q1"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
@@ -150,6 +151,39 @@
                         <p>2. How often have you skipped meals or lost sleep due to stress?</p>
                         <select id="q2"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
                     </div>
+                    <div class="question-group">
+                        <p>3. How often have you felt isolated from your peers or friends?</p>
+                        <select id="q3"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
+                    </div>
+                    <div class="question-group">
+                        <p>4. How often have you struggled to concentrate on your modules?</p>
+                        <select id="q4"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
+                    </div>
+                    <div class="question-group">
+                        <p>5. How often have you felt physically exhausted during the day?</p>
+                        <select id="q5"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
+                    </div>
+                    <div class="question-group">
+                        <p>6. How often have you experienced racing thoughts when trying to rest?</p>
+                        <select id="q6"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
+                    </div>
+                    <div class="question-group">
+                        <p>7. How often have you felt anxious about your future or grades?</p>
+                        <select id="q7"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
+                    </div>
+                    <div class="question-group">
+                        <p>8. How often have you lost interest in hobbies you usually enjoy?</p>
+                        <select id="q8"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
+                    </div>
+                    <div class="question-group">
+                        <p>9. How often have you procrastinated because a task felt too difficult?</p>
+                        <select id="q9"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
+                    </div>
+                    <div class="question-group">
+                        <p>10. How often have you doubted your ability to succeed this semester?</p>
+                        <select id="q10"><option value="1">Rarely</option><option value="2">Sometimes</option><option value="3">Often</option></select>
+                    </div>
+
                     <button class="primary-btn submit-quiz" onclick="submitQuiz()">Submit Check-In</button>
                     <div id="quiz-result" class="quiz-result-box hidden"></div>
                     <button id="download-report-btn" class="secondary-btn hidden" style="margin-top: 10px;" onclick="downloadReport()">Download Report</button>
@@ -176,8 +210,32 @@
             </div>
 
             <div id="coping" class="tab-content">
-                <h2>Coping Guides</h2>
-                <p>Explore resources and guides to help manage stress.</p>
+                <div class="dashboard-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 5px; margin-bottom: 20px;">
+                    <h2>coping guides library</h2>
+                    <p style="color: var(--text-light); font-size: 14px;">structured guides to help you manage academic pressure and stress.</p>
+                </div>
+                
+                <div class="sketchbook-board">
+                    <div class="doodle-note tilt-right">
+                        <h3>⏳ time management</h3>
+                        <p><strong>the pomodoro technique:</strong> study for 25 minutes, then take a strict 5-minute break. after 4 cycles, take a 15-minute break. this prevents mental fatigue and burnout.</p>
+                    </div>
+
+                    <div class="doodle-note tilt-left">
+                        <h3>🔴 panic attack relief</h3>
+                        <p><strong>the 5-4-3-2-1 method:</strong> focus on your surroundings. find 5 things you can see, 4 you can touch, 3 you can hear, 2 you can smell, and 1 you can taste to ground your nervous system.</p>
+                    </div>
+
+                    <div class="doodle-note tilt-right highlight-purple">
+                        <h3>💤 sleep hygiene</h3>
+                        <p><strong>screen curfew:</strong> stop looking at screens 30 minutes before bed. the blue light suppresses melatonin production, leading to the racing thoughts that keep you awake.</p>
+                    </div>
+
+                    <div class="doodle-note tilt-left">
+                        <h3>🤱 student mothers</h3>
+                        <p><strong>micro-tasking:</strong> when balancing a child and coursework, don't wait for a 2-hour block. break assignments into 15-minute micro-tasks you can do while the baby naps.</p>
+                    </div>
+                </div>
             </div>
 
             <div id="stress" class="tab-content">
@@ -211,6 +269,6 @@
     </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="/static/app.js?v=3"></script>
+    <script src="/static/app.js?v=4"></script>
 </body>
 </html>
