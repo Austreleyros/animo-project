@@ -57,7 +57,10 @@ input:checked + .slider:before { transform: translateX(26px); }
 .doodle-note { background: var(--white); padding: 25px; width: calc(33.333% - 20px); min-width: 250px; font-family: var(--hand-font); color: var(--text-dark); border: 2px solid #222; border-radius: 2% 95% 3% 90% / 95% 4% 92% 5%; box-shadow: 3px 4px 0px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, box-shadow 0.3s ease; }
 .interactive-note { cursor: pointer; }
 .interactive-note:hover { transform: scale(1.05) rotate(0deg); z-index: 10; box-shadow: 5px 8px 0px rgba(0,0,0,0.15); }
-.doodle-note.flipping { transform: rotateY(90deg) scale(1.05) !important; opacity: 0.2; }
+.doodle-note.flipping { 
+    transform: rotateY(90deg) scale(1.05) !important; 
+    opacity: 0 !important; /* Forces the card to turn invisible at the halfway point */
+}
 .tilt-left { transform: rotate(-3deg); }
 .tilt-right { transform: rotate(2deg); }
 .highlight-purple { background-color: #faf5ff; border-color: var(--main-purple); }
