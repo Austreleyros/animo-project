@@ -157,28 +157,65 @@ function flipNote(element) {
 
 // ---------------- DOODLE CANVAS ----------------
 let canvas, ctx, isdrawing = false, hasDrawn = false;
+
 function initCanvas() {
     canvas = document.getElementById('doodle-pad');
     ctx = canvas.getContext('2d');
     ctx.lineWidth = 3;
     ctx.lineCap = 'round';
     ctx.strokeStyle = '#4a148c';
+    
+    // Desktop Mouse Events
     canvas.addEventListener('mousedown', startDrawing);
     canvas.addEventListener('mousemove', draw);
     canvas.addEventListener('mouseup', stopDrawing);
     canvas.addEventListener('mouseout', stopDrawing);
+    
+    // Mobile Touch Events
+    canvas.addEventListener('touchstart', startDrawing, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchcancel', stopDrawing);
 }
-function startDrawing(e) { isdrawing = true; hasDrawn = true; draw(e); }
+
+// Helper function to get correct coordinates for both mouse and touch
+function getCoordinates(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+    };
+}
+
+function startDrawing(e) { 
+    if (e.cancelable) e.preventDefault(); // Prevents screen from scrolling on mobile
+    isdrawing = true; 
+    hasDrawn = true; 
+    const coords = getCoordinates(e);
+    ctx.beginPath();
+    ctx.moveTo(coords.x, coords.y);
+}
+
 function draw(e) {
     if (!isdrawing) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    ctx.lineTo(x, y); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x, y);
+    if (e.cancelable) e.preventDefault(); // Prevents screen from scrolling on mobile
+    const coords = getCoordinates(e);
+    ctx.lineTo(coords.x, coords.y); 
+    ctx.stroke();
 }
-function stopDrawing() { isdrawing = false; ctx.beginPath(); }
-function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); hasDrawn = false; }
+
+function stopDrawing(e) { 
+    if (e && e.cancelable) e.preventDefault();
+    isdrawing = false; 
+    ctx.beginPath(); 
+}
+
+function clearCanvas() { 
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+    hasDrawn = false; 
+}
 
 async function saveJournal() {
     const textElement = document.getElementById('journal-text');
