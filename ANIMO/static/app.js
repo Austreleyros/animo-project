@@ -247,7 +247,7 @@ async function viewJournals() {
     const historyContainer = document.getElementById('journal-history');
     const historyList = document.getElementById('journal-history-list');
     historyContainer.classList.remove('hidden');
-    historyList.innerHTML = '<p style="font-family: var(--hand-font);">Unlocking journal...</p>';
+    historyList.innerHTML = '<p style="font-family: var(--hand-font);">Unlocking Journal...</p>';
     try {
         const response = await fetch(`/api/journal?username=${encodeURIComponent(currentusername)}`);
         const entries = await response.json();
@@ -273,7 +273,7 @@ async function viewJournals() {
 // ---------------- QUIZ & MOOD ----------------
 async function submitQuiz() {
     let score = 0;
-    for(let i = 1; i <= 10; i++) { score += parseInt(document.getElementById('q' + i).value); }
+    for(let i = 1; i <= 2; i++) { score += parseInt(document.getElementById('q' + i).value); } // Adjusted loop to match HTML demo length
     let advice = "";
     if (score <= 15) { advice = "You are carrying a manageable load today. It is wonderful that you are navigating things well. Please remember to keep up your gentle self-care routines, drink a glass of water, and celebrate your small wins today."; } 
     else if (score <= 24) { advice = "You are carrying quite a bit of weight right now, and it makes complete sense that you feel tired. Please be gentle with yourself today. Your grades do not define your worth. Taking a 10-minute break to just breathe is a productive thing to do."; } 
@@ -385,7 +385,6 @@ function sendHug() {
 
 // ---------------- NEW: STRESS RELIEF ZONE GAMES ----------------
 
-// 1. Virtual Bubble Wrap
 function initBubbles() {
     const grid = document.getElementById('bubble-wrap-grid');
     grid.innerHTML = '';
@@ -403,7 +402,6 @@ function initBubbles() {
 function resetBubbles() { initBubbles(); }
 
 
-// 2. The Worry Drop (Physics Engine)
 let worryEngine, worryRender, worryWorld, bottomWall;
 
 function initWorryDrop() {
