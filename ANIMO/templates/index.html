@@ -53,27 +53,57 @@
         </div>
 
         <div class="content">
-            <button class="hug-btn" onclick="sendHug()">✨ Send a Hug</button>
+            <button class="hug-btn" onclick="sendHug()">✨ send a hug</button>
             <div id="hug-container"></div>
 
             <div id="dashboard" class="tab-content active">
-                <div class="dashboard-header">
-                    <h2>Welcome to Your Safe Space</h2>
+                <div class="dashboard-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 5px; margin-bottom: 20px;">
+                    <h2>✨ your safe space sketchbook ✨</h2>
+                    <p style="color: var(--text-light); font-size: 14px;">take a deep breath. tap any note to flip it for a new message. stay as long as you need.</p>
                 </div>
+                
                 <div class="sketchbook-board">
-                    <div class="doodle-note shape-cloud interactive-note" onclick="flipNote(this)">
-                        <p>Click me for a gentle reminder ✨</p>
+                    <div class="doodle-note tilt-left" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <h3 style="margin-bottom: 10px;">breathe with me</h3>
+                        <div class="breathing-widget" style="height: 150px; margin: 0;">
+                            <div class="breathing-circle" style="margin-top: 0;">
+                                <span id="breathe-text">inhale</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="doodle-note tilt-left interactive-note" onclick="flipNote(this)">
-                        <p>Click me for a soft truth ✨</p>
-                    </div>
+
                     <div class="doodle-note tilt-right interactive-note" onclick="flipNote(this)">
-                        <p>Click me for grounding ✨</p>
+                        <h3>🌿 5-4-3-2-1 grounding</h3>
+                        <p>look around you right now and find 5 things you can see, 4 you can touch, 3 you can hear, 2 you can smell, and 1 you can taste.</p>
                     </div>
-                </div>
-                <div class="breathing-widget">
-                    <div class="breathing-circle">
-                        <span id="breathe-text">Inhale</span>
+
+                    <div class="doodle-note tilt-left highlight-purple interactive-note" onclick="flipNote(this)">
+                        <h3>🤍 gentle reminder</h3>
+                        <p>unclench your jaw. drop your shoulders. remove your tongue from the roof of your mouth. take a slow sip of water.</p>
+                    </div>
+
+                    <div class="doodle-note tilt-left interactive-note" onclick="flipNote(this)">
+                        <h3>☕ you are not alone</h3>
+                        <p>over 60% of college students face mental health issues, yet few seek professional help. it is okay to reach out.</p>
+                    </div>
+
+                    <div class="doodle-note tilt-right interactive-note" onclick="flipNote(this)">
+                        <h3>💌 professional advice</h3>
+                        <p>"academic stress is temporary, but your well-being is permanent. do not trade your mental health for a grade."</p>
+                    </div>
+
+                    <div class="doodle-note tilt-left interactive-note" onclick="flipNote(this)">
+                        <h3>🦋 fact check</h3>
+                        <p>feeling overwhelmed does not mean you are failing. it means your brain is overloaded. step away from the screen for 10 minutes.</p>
+                    </div>
+
+                    <div class="doodle-note shape-cloud highlight-purple interactive-note" onclick="flipNote(this)">
+                        <p>you have survived 100% of your bad days. ✨</p>
+                    </div>
+
+                    <div class="doodle-note tilt-right interactive-note" onclick="flipNote(this)">
+                        <h3>🌈 validations</h3>
+                        <p>your feelings make sense. it makes sense that you are tired. give yourself permission to feel it without judging yourself.</p>
                     </div>
                 </div>
             </div>
@@ -181,7 +211,6 @@
     </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    
-    <script src="/static/app.js?v=2"></script>
+    <script src="/static/app.js?v=3"></script>
 </body>
 </html>
