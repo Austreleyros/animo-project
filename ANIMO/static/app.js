@@ -468,18 +468,18 @@ function letGoWorries() {
     }, 2000);
 }
 function logout() {
-    // Reset user variables
+    // 1. Reset the user data
     isanonymous = true;
     currentusername = "anonymous user";
     
-    // Reset UI elements
+    // 2. Clear the login fields so the next person doesn't see your name
     document.getElementById('username').value = "";
     document.getElementById('anon-toggle').checked = true;
     
-    // Swap screens
+    // 3. Hide the app and show the login screen again
     document.getElementById('app-container').classList.add('hidden');
     document.getElementById('login-overlay').classList.remove('hidden');
     
-    // Optional: clear the mood list or chat preview for privacy
+    // 4. (Optional) Reset your mood logs for privacy
     document.getElementById('mood-list').innerHTML = "";
 }
