@@ -467,3 +467,19 @@ function letGoWorries() {
         });
     }, 2000);
 }
+function logout() {
+    // Reset user variables
+    isanonymous = true;
+    currentusername = "anonymous user";
+    
+    // Reset UI elements
+    document.getElementById('username').value = "";
+    document.getElementById('anon-toggle').checked = true;
+    
+    // Swap screens
+    document.getElementById('app-container').classList.add('hidden');
+    document.getElementById('login-overlay').classList.remove('hidden');
+    
+    // Optional: clear the mood list or chat preview for privacy
+    document.getElementById('mood-list').innerHTML = "";
+}
